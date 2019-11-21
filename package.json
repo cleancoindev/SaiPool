@@ -20,5 +20,6 @@
   "homepage": "https://github.com/InstaDApp/SaiPool#readme",
   "devDependencies": {
     "lite-server": "^2.5.4"
-  }
+  },
+  "dependencies": {}
 }
