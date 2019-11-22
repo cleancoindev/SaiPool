@@ -30,7 +30,6 @@ async function getData() {
           color: "#1e272e"
         }
       },
-      max: 600000,
       min: 0
     },
     xAxis: {
