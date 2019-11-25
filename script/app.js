@@ -4,6 +4,10 @@ async function getData() {
   let obj = await response.json();
   const data = obj.data;
 
+  let currentSaiStatus = await fetch("https://api.instadapp.io/mcd/current-sai-balance");
+  let resObj = await currentSaiStatus.json();
+  const currentSaiInMigration = resObj.data;
+
   // Convert data in accordance to highcharts
   var newData = [];
   for (let keys in data) {
@@ -21,6 +25,21 @@ async function getData() {
         fontSize: "25px"
       }
     },
+    subtitle: {
+      useHTML: true,
+      text: ` 
+      <div class="text-center">
+      <p style="font-size: 30px; margin :0px;" >
+              ${(currentSaiInMigration / 10 ** 18).toFixed()}
+              <br><p style="font-size: 15px;"> Current Sai Balance
+      </p>
+  </div>`,
+      style: {
+        fontSize: "13px",
+        color: "#1e272e"
+      }
+    },
+
     yAxis: {
       title: {
         text: "Sai Balance",
