@@ -1,20 +1,37 @@
+var result;
+var chart;
+
+// Fetching and converting current Sai Balance in Migration Contract
+async function currentSaiBalance() {
+  let currentSaiStatus = await fetch("https://api.instadapp.io/mcd/current-sai-balance");
+  let resObj = await currentSaiStatus.json();
+  var currentSaiInMigration = resObj.data.toFixed(2);
+
+  function numberWithCommas(x) {
+    var parts = x.toString().split(".");
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return parts.join(".");
+  }
+
+  result = numberWithCommas(currentSaiInMigration);
+  return result;
+}
+
+// Fetches all the data and returns the chart
 async function getData() {
   //await the response of the fetch call
   let response = await fetch("https://api.instadapp.io/mcd/sai-balance");
   let obj = await response.json();
   const data = obj.data;
 
-  let currentSaiStatus = await fetch("https://api.instadapp.io/mcd/current-sai-balance");
-  let resObj = await currentSaiStatus.json();
-  const currentSaiInMigration = resObj.data;
-
+  const final = await currentSaiBalance();
   // Convert data in accordance to highcharts
   var newData = [];
   for (let keys in data) {
     newData.push([Number(keys), data[keys]]);
   }
 
-  Highcharts.chart("container", {
+  chart = Highcharts.chart("container", {
     chart: {
       height: (9 / 20) * 100 + "%" // 20:9 ratio, Change height
     },
@@ -30,7 +47,7 @@ async function getData() {
       text: ` 
       <div class="text-center">
       <p style="font-size: 30px; margin :0px;" >
-              ${(currentSaiInMigration / 10 ** 18).toFixed()}
+              ${final}
               <br><p style="font-size: 15px;"> Current Sai Balance
       </p>
   </div>`,
@@ -106,3 +123,16 @@ async function getData() {
 }
 
 getData();
+
+const updateCurrentSaiBalance = async () => {
+  const result = await currentSaiBalance();
+  let text = `<div class="text-center">
+  <p style="font-size: 30px; margin :0px;" >
+          ${result}
+          <br><p style="font-size: 15px;"> Current Sai Balance
+  </p>
+</div>`;
+  chart.setTitle(null, {text});
+};
+
+setInterval(updateCurrentSaiBalance, 15000);
